@@ -83,6 +83,15 @@ let baseMaps = {
     "Streets": streets,
     "Satellite": satelliteStreets,
   };
+  
+// Create the earthquake layer for our map.
+let earthquakes = new L.layerGroup();
+
+// We define an object that contains the overlays.
+// This overlay will be visible all the time.
+let overlays = {
+  Earthquakes: earthquakes
+};
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
@@ -92,7 +101,7 @@ let map = L.map('mapid', {
 });
 
 // Pass our map layers into our layers control and add the layers control to the map.
-L.control.layers(baseMaps).addTo(map);
+L.control.layers(baseMaps, overlays).addTo(map);
 
 // // Then we add our 'graymap' tile layer to the map.
 // streets.addTo(map);
@@ -177,5 +186,8 @@ function getColor(magnitude) {
       onEachFeature: function(feature, layer) {
       layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
-    }).addTo(map);
+    }).addTo(earthquakes);
+
+    //Then add earthquake layer to map
+    earthquakes.addTo(map);
 });
