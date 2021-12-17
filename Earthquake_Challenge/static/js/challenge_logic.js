@@ -15,6 +15,13 @@ let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/sate
 	accessToken: API_KEY
 });
 
+// We create a third tile layer for Mapbox Outdoors
+let navNight = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+	attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+	maxZoom: 18,
+	accessToken: API_KEY
+});
+
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
 	center: [40.7, -94.5],
@@ -25,7 +32,8 @@ let map = L.map('mapid', {
 // Create a base layer that holds all three maps.
 let baseMaps = {
   "Streets": streets,
-  "Satellite": satelliteStreets
+  "Satellite": satelliteStreets,
+  "Nightime Navigation:": navNight
 };
 
 // 1. Add a 2nd layer group for the tectonic plate data.
@@ -110,8 +118,6 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   // Then we add the earthquake layer to our map.
   allEarthquakes.addTo(map);
 
-});
-
   // Create a style for the lines.
   let myStyle = {
     color: "#ffffa1",
@@ -125,7 +131,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   });
 
   d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson").then(function(data) {
-    L.geoJson(data).addTo(majorEarthquakes);
+    //L.geoJson(data).addTo(majorEarthquakes);
   
 
   // 4. Use the same style as the earthquake data.
@@ -159,6 +165,9 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   // This function determines the radius of the earthquake marker based on its magnitude.
   // Earthquakes with a magnitude of 0 were being plotted with the wrong radius.
 function getRadius(magnitude) {
+  if (magnitude === 0) {
+    return 1;
+  }
   return magnitude * 4;
 }
 
@@ -214,4 +223,4 @@ majorEarthquakes.addTo(map);
 
   // Finally, we add our legend to the map.
   legend.addTo(map);
-//});
+});
